@@ -1,5 +1,5 @@
 import os
-
+import math
 import matplotlib.pyplot as plt
 import numpy as np
 from Dicom_RT_and_Images_to_Mask.src.DicomRTTool.ReaderWriter import DicomReaderWriter
@@ -41,3 +41,9 @@ physical_center = dose_plane.TransformContinuousIndexToPhysicalPoint((plane_size
 wanted_start = dose_plane.TransformPhysicalPointToIndex((physical_center[0], physical_center[1] - physical_start))
 wanted_stop = dose_plane.TransformPhysicalPointToIndex((physical_center[0], physical_center[1] + physical_start))
 dose_line = dose_plane_array[wanted_start[1]:wanted_stop[1], wanted_start[0]]
+start_value = dose_line[0]*100 # in cGy
+stop_value = dose_line[-1]*100 # in cGy
+measured_angle = 90 - math.degrees(math.atan((start_value - stop_value)/(physical_start*2)))
+below = 90 - math.degrees(math.atan((start_value*1.02 - stop_value*.98)/(physical_start*2)))
+above = 90 - math.degrees(math.atan((start_value*.98 - stop_value*1.02)/(physical_start*2)))
+print(f"Measured angle is expected to be {measured_angle}, and allowed to be within {below} and {above}")
