@@ -8,7 +8,6 @@ MRN.txt
 # C extensions
 *.so
 *.mha
-*.nii.gz
 *.xml
 *.xlsx
 PreProcessingTools/Data.xlsx
@@ -120,6 +119,3 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-/PreProcessingTools/MRN
-!/PreProcessingTools/Data.xlsx
-!/PreProcessingTools/Data.xlsx

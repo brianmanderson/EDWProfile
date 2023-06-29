@@ -7,17 +7,24 @@ from PlotScrollNumpyArrays.Plot_Scroll_Images import plot_scroll_Image
 import SimpleITK as sitk
 from NiftiResampler.ResampleTools import ImageResampler
 
-path = r'K:\DosePlane'
-cross_plane_field_size = 200  # in mm
-physical_start = cross_plane_field_size//2*.9 - 5
-if not os.path.exists("DosePlane_15X.nii.gz") or True:
+
+PDD = {'15X': {"Depth": [10.0191, 3.99859], "PDD": [76.6987, 96.1042]},
+       '6X': {'Depth': [9.99814, 4.01534], "PDD": [69.5299, 90.9968]}}
+energy = '6X'
+path = fr"K:\DosePlane\{energy}"
+cross_plane_field_size = 200*.9  # in mm
+physical_start = cross_plane_field_size/2
+hard_shift = 0
+data = PDD[energy]
+u = math.log(data["PDD"][0]/data["PDD"][1])/(data["Depth"][1]-data["Depth"][0])
+if not os.path.exists(f"DosePlane_{energy}.nii.gz") or True:
     Dicom_reader = DicomReaderWriter(description='Examples', verbose=False, get_dose_output=True, Contour_Names=["Body"])
     Dicom_reader.set_contour_names_and_associations(contour_names=["Body"])
     Dicom_reader.walk_through_folders(path)
     Dicom_reader.get_images()
     Dicom_reader.get_dose()
     dose_plane = Dicom_reader.dose_handle[:, :, 0]
-    sitk.WriteImage(dose_plane, "DosePlane_15X.nii.gz")
+    sitk.WriteImage(dose_plane, f"DosePlane_{energy}.nii.gz")
     """
     Bear in mind that virtual phantoms do not write out where the water is...The body contour keeps it though
     """
@@ -32,7 +39,7 @@ if not os.path.exists("DosePlane_15X.nii.gz") or True:
     # dose_plane = dose_handle[:, desired_plane[1], :]
     # sitk.WriteImage(dose_plane, "DosePlane_15X.nii.gz")
 else:
-    dose_plane = sitk.ReadImage("DosePlane_15X.nii.gz")
+    dose_plane = sitk.ReadImage(f"DosePlane_{energy}.nii.gz")
 
 plane_size = dose_plane.GetSize()
 dose_plane_array = sitk.GetArrayFromImage(dose_plane)
@@ -43,7 +50,7 @@ wanted_stop = dose_plane.TransformPhysicalPointToIndex((physical_center[0], phys
 dose_line = dose_plane_array[wanted_start[1]:wanted_stop[1], wanted_start[0]]
 start_value = dose_line[0]*100 # in cGy
 stop_value = dose_line[-1]*100 # in cGy
-measured_angle = 90 - math.degrees(math.atan((start_value - stop_value)/(physical_start*2)))
-below = 90 - math.degrees(math.atan((start_value*1.02 - stop_value*.98)/(physical_start*2)))
-above = 90 - math.degrees(math.atan((start_value*.98 - stop_value*1.02)/(physical_start*2)))
-print(f"Measured angle is expected to be {measured_angle}, and allowed to be within {below} and {above}")
+measured_angle = math.degrees(math.atan(math.log(start_value/stop_value)/(u*(physical_start*2/10))))
+above = math.degrees(math.atan(math.log(start_value*1.02/(stop_value*.98))/(u*(physical_start*2/10))))
+below = math.degrees(math.atan(math.log(start_value*0.98/(stop_value*1.02))/(u*(physical_start*2/10))))
+print(f"Measured angle is expected to be {measured_angle} and between {below} and {above}")
