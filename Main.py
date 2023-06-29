@@ -34,6 +34,9 @@ wanted_stop = dose_plane.TransformPhysicalPointToIndex((physical_center[0], phys
 dose_line = dose_plane_array[wanted_start[1]:wanted_stop[1], wanted_start[0]]
 start_value = dose_line[0]*100  # in cGy
 stop_value = dose_line[-1]*100  # in cGy
+"""
+Now measuring the angle
+"""
 measured_angle = np.round(math.degrees(math.atan(math.log(start_value/stop_value)/(u*(physical_start*2/10)))), 2)
 above = np.round(math.degrees(math.atan(math.log(start_value*1.02/(stop_value*.98))/(u*(physical_start*2/10)))), 2)
 below = np.round(math.degrees(math.atan(math.log(start_value*0.98/(stop_value*1.02))/(u*(physical_start*2/10)))), 2)
