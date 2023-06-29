@@ -9,13 +9,12 @@ import SimpleITK as sitk
 
 PDD = {'15X': {"Depth": [10.0191, 3.99859], "PDD": [76.6987, 96.1042]},
        '6X': {'Depth': [9.99814, 4.01534], "PDD": [69.5299, 90.9968]}}
+cross_plane_field_size = 200 * .8  # in mm
+physical_start = cross_plane_field_size / 2
 for energy in ['15X', '6X']:
     for angle in [30, 60]:
         path = fr"K:\DosePlane\{energy}\{angle}Degree"
         file_name = f"DosePlane_{energy}_{angle}Degree.nii.gz"
-        cross_plane_field_size = 200*.8  # in mm
-        physical_start = cross_plane_field_size/2
-        hard_shift = 0
         data = PDD[energy]
         u = math.log(data["PDD"][0]/data["PDD"][1])/(data["Depth"][1]-data["Depth"][0])
         if not os.path.exists(file_name) or True:
