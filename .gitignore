@@ -6,6 +6,7 @@ errors_log.txt
 Data/
 MRN.txt
 # C extensions
+*$*
 *.so
 *.mha
 *.xml
