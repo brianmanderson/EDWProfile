@@ -2,7 +2,7 @@ import os
 import math
 import matplotlib.pyplot as plt
 import numpy as np
-from Dicom_RT_and_Images_to_Mask.src.DicomRTTool.ReaderWriter import DicomReaderWriter
+from DicomRTTool.ReaderWriter import DicomReaderWriter
 from PlotScrollNumpyArrays.Plot_Scroll_Images import plot_scroll_Image
 import SimpleITK as sitk
 

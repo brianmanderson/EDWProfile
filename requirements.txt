@@ -1,0 +1,5 @@
+DicomRTTool
+SimpleITK
+numpy
+matplotlib
+PlotScrollNumpyArrays
